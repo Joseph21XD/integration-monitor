@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.integration.monitor.exception.ExecutionProcessMismatchException;
 import com.integration.monitor.model.IntegrationProcess;
@@ -17,6 +18,7 @@ import com.integration.monitor.model.ProcessType;
 import com.integration.monitor.repository.IntegrationProcessRepository;
 import com.integration.monitor.repository.ProcessExecutionRepository;
 
+@ActiveProfiles("dev")
 @SpringBootTest
 @AutoConfigureTestDatabase(
         replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -38,7 +40,7 @@ class ProcessExecutionServiceIntegrationTest {
                 = new IntegrationProcess(
                         "Integration Test",
                         ProcessType.OSB,
-                        ProcessStatus.SUCCESS);
+                        ProcessStatus.RUNNING);
 
         process = processRepository.save(process);
 

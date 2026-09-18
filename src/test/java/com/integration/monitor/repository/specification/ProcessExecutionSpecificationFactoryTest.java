@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.integration.monitor.dto.ExecutionSearchRequest;
 import com.integration.monitor.model.IntegrationProcess;
@@ -19,6 +20,7 @@ import com.integration.monitor.model.ProcessType;
 import com.integration.monitor.repository.IntegrationProcessRepository;
 import com.integration.monitor.repository.ProcessExecutionRepository;
 
+@ActiveProfiles("dev")
 @DataJpaTest
 @AutoConfigureTestDatabase(
         replace = AutoConfigureTestDatabase.Replace.NONE

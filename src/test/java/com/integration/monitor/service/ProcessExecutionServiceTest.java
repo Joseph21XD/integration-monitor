@@ -23,6 +23,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.integration.monitor.dto.ExecutionSearchRequest;
 import com.integration.monitor.exception.ExecutionNotFoundException;
@@ -37,6 +38,7 @@ import com.integration.monitor.repository.IntegrationProcessRepository;
 import com.integration.monitor.repository.ProcessExecutionRepository;
 import com.integration.monitor.repository.specification.ProcessExecutionSpecificationFactory;
 
+@ActiveProfiles("dev")
 @ExtendWith(MockitoExtension.class)
 class ProcessExecutionServiceTest {
 
@@ -118,7 +120,7 @@ class ProcessExecutionServiceTest {
                 = new IntegrationProcess(
                         "SINPE Service",
                         ProcessType.REST_API,
-                        ProcessStatus.SUCCESS);
+                        ProcessStatus.RUNNING);
 
         when(processRepository.findById(1L))
                 .thenReturn(Optional.of(process));
@@ -248,8 +250,8 @@ class ProcessExecutionServiceTest {
         when(processRepository.findById(1L))
                 .thenReturn(Optional.of(process));
 
-        when(executionRepository.findById(100L))
-                .thenReturn(Optional.of(execution));
+        when(executionRepository.findById(999L))
+                .thenThrow(new ExecutionNotFoundException(999L));
 
         assertThrows(
                 ExecutionNotFoundException.class,

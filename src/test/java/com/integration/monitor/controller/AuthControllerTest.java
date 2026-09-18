@@ -11,14 +11,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -26,9 +29,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.integration.monitor.dto.LoginRequest;
+import com.integration.monitor.exception.GlobalExceptionHandler;
 import com.integration.monitor.security.JwtService;
 
+@ActiveProfiles("dev")
+@AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(AuthController.class)
+@Import(GlobalExceptionHandler.class)
 class AuthControllerTest {
 
     @Autowired
@@ -50,9 +57,8 @@ class AuthControllerTest {
                 = mock(Authentication.class);
 
         when(authentication.getAuthorities())
-                .thenAnswer(invocation ->
-                        (Collection<? extends GrantedAuthority>)
-                                List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+                .thenAnswer(invocation
+                        -> (Collection<? extends GrantedAuthority>) List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
 
         when(authenticationManager.authenticate(any()))
                 .thenReturn(authentication);
@@ -94,10 +100,16 @@ class AuthControllerTest {
     @Test
     void shouldRejectInvalidCredentials() throws Exception {
         when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("Invalid username or password"));
+
         LoginRequest request = new LoginRequest();
         request.setUsername("admin");
         request.setPassword("wrong-password");
-        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request))).andExpect(status().isUnauthorized());
+
+        mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized());
+                
         verify(authenticationManager).authenticate(any());
         verifyNoInteractions(jwtService);
     }

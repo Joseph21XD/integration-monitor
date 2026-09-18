@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -25,6 +24,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.integration.monitor.dto.FailExecutionRequest;
 import com.integration.monitor.dto.ProcessExecutionResponse;
 import com.integration.monitor.exception.ExecutionNotFoundException;
 import com.integration.monitor.exception.InvalidStatusTransitionException;
@@ -32,6 +33,8 @@ import com.integration.monitor.model.IntegrationProcess;
 import com.integration.monitor.model.ProcessExecution;
 import com.integration.monitor.model.ProcessStatus;
 import com.integration.monitor.model.ProcessType;
+import com.integration.monitor.security.JwtAuthenticationFilter;
+import com.integration.monitor.security.JwtService;
 import com.integration.monitor.service.ProcessExecutionService;
 
 @WebMvcTest(ProcessExecutionController.class)
@@ -41,8 +44,17 @@ class ProcessExecutionControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @MockBean
     private ProcessExecutionService service;
+
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Test
     void shouldStartExecution() throws Exception {
@@ -89,8 +101,6 @@ class ProcessExecutionControllerTest {
                         LocalDateTime.of(2026, 9, 12, 10, 0),
                         ProcessStatus.SUCCESS);
 
-        execution.finish(ProcessStatus.SUCCESS);
-
         when(service.completeExecution(1L, 10L))
                 .thenReturn(execution);
 
@@ -110,15 +120,16 @@ class ProcessExecutionControllerTest {
                 = new IntegrationProcess(
                         "SINPE Service",
                         ProcessType.REST_API,
-                        ProcessStatus.FAILED);
+                        ProcessStatus.RUNNING);
 
         ProcessExecution execution
                 = new ProcessExecution(
                         process,
                         LocalDateTime.of(2026, 9, 12, 10, 0),
-                        ProcessStatus.FAILED);
+                        ProcessStatus.RUNNING);
 
         execution.fail("Connection timeout");
+
 
         when(service.failExecution(
                 1L,
@@ -126,9 +137,18 @@ class ProcessExecutionControllerTest {
                 "Connection timeout"))
                 .thenReturn(execution);
 
+        FailExecutionRequest request
+                = new FailExecutionRequest();
+        request.setErrorMessage("Connection timeout");
+
         mockMvc.perform(
                 post("/api/processes/1/executions/10/fail")
-                        .param("errorMessage", "Connection timeout"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                    {
+                        "errorMessage": "Connection timeout"
+                    }
+                    """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status")
                         .value("FAILED"))
@@ -161,7 +181,7 @@ class ProcessExecutionControllerTest {
 
         when(service.getExecutions(
                 eq(1L),
-                isNull(),
+                any(),
                 any(Pageable.class)))
                 .thenReturn(page);
 
@@ -265,15 +285,13 @@ class ProcessExecutionControllerTest {
                         LocalDateTime.of(2026, 9, 12, 10, 0),
                         ProcessStatus.FAILED);
 
-        execution.fail("Connection timeout");
-
         Page<ProcessExecution> page
                 = new PageImpl<>(List.of(execution));
 
         when(service.getExecutions(
                 eq(1L),
                 argThat(request
-                        -> request.getStatus() == null
+                        -> request.getStatus() == ProcessStatus.FAILED
                 && request.getFrom() == null
                 && request.getTo() == null),
                 any(Pageable.class)))
@@ -291,7 +309,7 @@ class ProcessExecutionControllerTest {
         verify(service).getExecutions(
                 eq(1L),
                 argThat(request
-                        -> request.getStatus() == null
+                        -> request.getStatus() == ProcessStatus.FAILED
                 && request.getFrom() == null
                 && request.getTo() == null),
                 any(Pageable.class));

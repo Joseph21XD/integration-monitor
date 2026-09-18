@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -22,6 +23,7 @@ import com.integration.monitor.service.IntegrationProcessService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("dev")
 class AuthenticationIntegrationTest {
 
     @Autowired
