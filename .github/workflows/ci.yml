@@ -59,9 +59,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get lowercase repository owner
+        id: repo
+        run: echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/integration-monitor:${{ github.sha }}
+          tags: ghcr.io/${{ steps.repo.outputs.owner }}/integration-monitor:${{ github.sha }}
