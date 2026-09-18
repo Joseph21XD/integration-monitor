@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: integration-monitor
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    root: INFO
+    com.integration.monitor: INFO
+  file:
+    name: /app/logs/integration-monitor.log
+
+integration:
+  monitor:
+    max-retry-attempts: 3
+    timeout-seconds: 30
+    environment: default
+
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+      expiration-minutes: 60
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    version: 1.0.0
+    environment: ${integration.monitor.environment}
+
+
+#set "DB_URL=jdbc:mysql://localhost:3306/demo?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+#set "DB_USERNAME=appuser"
+#set "DB_PASSWORD=app123"
+#set "JWT_SECRET=integration-monitor-dev-secret-key-2026-very-long"
+#docker run -d --name integration-monitor --network integration-network -p 8080:8080 --env-file .env integration-monitor:1.0
+#docker run -d  --name mysql-dev  -e MYSQL_ROOT_PASSWORD=app123  -e MYSQL_DATABASE=demo  -e MYSQL_USER=appuser  -e MYSQL_PASSWORD=app123  -p 3306:3306  -v integration-mysql-data:/var/lib/mysql  mysql
