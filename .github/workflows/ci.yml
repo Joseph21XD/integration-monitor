@@ -13,6 +13,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: demo
+          MYSQL_USER: appuser
+          MYSQL_PASSWORD: apppassword
+          MYSQL_ROOT_PASSWORD: rootpassword
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -u root -prootpassword"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,6 +42,9 @@ jobs:
 
       - name: Build and test
         run: mvn clean verify
-
-      - name: Build Docker image
-        run: docker build -t integration-monitor:${{ github.sha }} .
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          DB_URL: jdbc:mysql://localhost:3306/demo?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+          DB_USERNAME: appuser
+          DB_PASSWORD: apppassword
+          JWT_SECRET: test-secret-key-test-secret-key-test-secret
