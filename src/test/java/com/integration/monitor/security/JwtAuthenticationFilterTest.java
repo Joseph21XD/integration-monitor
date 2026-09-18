@@ -15,14 +15,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.integration.monitor.config.JwtProperties;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 
-@ActiveProfiles("dev")
 class JwtAuthenticationFilterTest {
 
     private JwtService jwtService;

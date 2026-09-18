@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.integration.monitor.model.IntegrationProcess;
@@ -14,7 +13,6 @@ import com.integration.monitor.model.ProcessType;
 import com.integration.monitor.repository.IntegrationProcessRepository;
 import com.integration.monitor.service.IntegrationProcessService;
 
-@ActiveProfiles("dev")
 @SpringBootTest
 @Transactional
 class IntegrationProcessIntegrationTest {

@@ -12,13 +12,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.integration.monitor.model.IntegrationProcess;
 import com.integration.monitor.model.ProcessStatus;
 import com.integration.monitor.model.ProcessType;
 
-@ActiveProfiles("dev")
 @DataJpaTest
 @AutoConfigureTestDatabase(
     replace = AutoConfigureTestDatabase.Replace.NONE

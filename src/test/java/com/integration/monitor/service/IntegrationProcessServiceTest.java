@@ -18,7 +18,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.integration.monitor.exception.InvalidProcessException;
 import com.integration.monitor.exception.InvalidStatusTransitionException;
@@ -29,7 +28,6 @@ import com.integration.monitor.model.ProcessStatus;
 import com.integration.monitor.model.ProcessType;
 import com.integration.monitor.repository.IntegrationProcessRepository;
 
-@ActiveProfiles("dev")
 @ExtendWith(MockitoExtension.class)
 class IntegrationProcessServiceTest {
 

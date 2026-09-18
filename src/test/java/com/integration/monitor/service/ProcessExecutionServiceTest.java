@@ -23,7 +23,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.integration.monitor.dto.ExecutionSearchRequest;
 import com.integration.monitor.exception.ExecutionNotFoundException;
@@ -38,7 +37,6 @@ import com.integration.monitor.repository.IntegrationProcessRepository;
 import com.integration.monitor.repository.ProcessExecutionRepository;
 import com.integration.monitor.repository.specification.ProcessExecutionSpecificationFactory;
 
-@ActiveProfiles("dev")
 @ExtendWith(MockitoExtension.class)
 class ProcessExecutionServiceTest {
 

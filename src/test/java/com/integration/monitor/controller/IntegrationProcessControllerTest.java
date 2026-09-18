@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -36,7 +35,7 @@ import com.integration.monitor.security.JwtAuthenticationFilter;
 import com.integration.monitor.security.JwtService;
 import com.integration.monitor.service.IntegrationProcessService;
 
-@ActiveProfiles("dev")
+
 @WebMvcTest(IntegrationProcessController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @Import(GlobalExceptionHandler.class)

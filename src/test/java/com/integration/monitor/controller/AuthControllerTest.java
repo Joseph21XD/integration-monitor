@@ -21,7 +21,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,7 +31,7 @@ import com.integration.monitor.dto.LoginRequest;
 import com.integration.monitor.exception.GlobalExceptionHandler;
 import com.integration.monitor.security.JwtService;
 
-@ActiveProfiles("dev")
+
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(AuthController.class)
 @Import(GlobalExceptionHandler.class)
